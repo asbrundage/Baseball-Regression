@@ -10,15 +10,28 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Setup
 
 ```{r cars}
-library()
+library(moderndive)
+library(tidyverse)
+library(readxl)
+library(stats)
+library(knitr)
+
+
 ```
 
-## Including Plots
+## Data Processing
 
 You can also embed plots, for example:
 
 ```{r pressure, echo=FALSE}
-plot(pressure)
+Baseball_Data <- read_excel("C:/Users/antbru/OneDrive - eVestment/New folder/Temp/Emory/Baseball Data.xlsx")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+model1 <- lm(Baseball_Data$`Attendance per game`~ Baseball_Data$`Avg Ticket Price`)
+
+summary(model1) 
+get_regression_table(model1) %>%
+  kable()
+```
+
