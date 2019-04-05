@@ -28,7 +28,7 @@ Baseball_Data <- read_excel("C:/Users/antbru/OneDrive - eVestment/New folder/Tem
 ```
 
 ```{r}
-model1 <- lm(Baseball_Data$`Attendance per game`~ Baseball_Data$`Avg Ticket Price`)
+model1 <- lm(Baseball_Data$`Attendance per game`~ Baseball_Data$`Avg Ticket Price` + Baseball_Data$`TV Households` + Baseball_Data$Population + Baseball_Data$`Revenue (M)` + Baseball_Data$`W-L%`)
 
 summary(model1) 
 get_regression_table(model1) %>%
