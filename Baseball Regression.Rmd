@@ -1,10 +1,15 @@
 ---
 title: "Baseball Regression"
 output: html_document
+# fig_width = 10
+# fig_height = 10
+# fig_width = 6
+# fig_height = 4
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,fig.width=50, fig.height=50)
+
 ```
 
 ## Setup
@@ -15,7 +20,9 @@ library(tidyverse)
 library(readxl)
 library(stats)
 library(knitr)
-
+library(corrplot)
+library(PerformanceAnalytics)
+setwd("C:\\Users\\asbru\\Documents\\Emory\\Managerial Economics\\Deliverables\\Baseball")
 
 ```
 
@@ -24,8 +31,26 @@ library(knitr)
 You can also embed plots, for example:
 
 ```{r pressure, echo=FALSE}
-Baseball_Data <- read_excel("C:/Users/antbru/OneDrive - eVestment/New folder/Temp/Emory/Baseball Data.xlsx")
+Baseball_Data <- read_excel("C:\\Users\\asbru\\Documents\\Emory\\Managerial Economics\\Deliverables\\Baseball\\Baseball Data v2.xlsx")
 ```
+
+##Correlation
+
+```{r }
+#Numeric data only
+correlationdata <- select(Baseball_Data,-c(Team,City))
+
+M <- cor(correlationdata)
+# png(file="corr.png", res=300, width=4500, height=4500)
+corrplot(M, method = "number", number.cex = 3, tl.cex = 3)
+# ggpairs(correlationdata)
+# chart.Correlation(correlationdata, histogram = TRUE,pch = 19)
+
+```
+
+
+
+##Regression
 
 ```{r}
 model1 <- lm(Baseball_Data$`Attendance per game`~ Baseball_Data$`Avg Ticket Price` + Baseball_Data$`TV Households` + Baseball_Data$Population + Baseball_Data$`Revenue (M)` + Baseball_Data$`W-L%`)
