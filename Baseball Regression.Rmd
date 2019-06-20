@@ -1,24 +1,103 @@
 ---
 title: "Baseball Regression"
 output: html_document
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE
+                      # ,fig.width=75, fig.height=75
+                      )
+
 ```
 
 ## Setup
 
 ```{r cars}
-library()
+library(moderndive)
+library(tidyverse)
+library(readxl)
+library(stats)
+library(knitr)
+library(corrplot)
+library(PerformanceAnalytics)
+library(plotly)
+setwd("C:\\Users\\asbru\\Documents\\Emory\\Managerial Economics\\Deliverables\\Baseball")
+
 ```
 
-## Including Plots
+## Data Processing
 
 You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r }
+Baseball_Data <- read_excel("C:\\Users\\asbru\\Documents\\Emory\\Managerial Economics\\Deliverables\\Baseball\\Baseball Data v4.xlsx")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+##Correlation
+
+```{r }
+#Numeric data only
+correlationdata <- select(Baseball_Data,-c(Team,City,State))
+
+M <- cor(correlationdata)
+# png(file="corr.png", res=300, width=4500, height=4500)
+corrplot(M, method = "number", number.cex = 2, tl.cex = 3)
+# ggpairs(correlationdata)
+# chart.Correlation(correlationdata, histogram = TRUE,pch = 19)
+
+```
+
+##Scatter
+
+```{r}
+
+Varscatter <-
+  # Baseball_Data %>%
+   ggplot(Baseball_Data, aes(x = `Total FB Likes`, y = `Attendance per game`)) +  # Set up canvas with outcome variable on y-axis
+  geom_point() +  # Plot the actual points
+  geom_smooth(method = "lm")
+
+
+
+
+ggplotly(Varscatter)
+# print(p)
+```
+
+
+
+##Regression
+
+```{r}
+model1 <- lm(Baseball_Data$`Attendance per game`~ Baseball_Data$`Avg Ticket Price` + Baseball_Data$`TV Households` + Baseball_Data$Population + Baseball_Data$`Revenue (M)` + Baseball_Data$`W-L%`)
+
+model2 <- lm(Baseball_Data$`Attendance per game` ~ 
+               Baseball_Data$`Player Expenses` 
+             # + Baseball_Data$`Hispanic Population`
+             + Baseball_Data$`Total FB Likes` 
+             + Baseball_Data$`FB:Talking About`
+             + Baseball_Data$`Facebook Fans (in Millions)`
+             # + Baseball_Data$`Avid Fan`
+             + Baseball_Data$`W-L%`
+             # + Baseball_Data$`Fan Cost Index* (incl. tickets, beer, soft drink, hot dog, hats, & parking)`
+             + Baseball_Data$Championships
+             + Baseball_Data$`Age of the stadium (in 2018)`
+             # + Baseball_Data$`HS Boys`
+             # + Baseball_Data$`Price for a beer`
+             # + Baseball_Data$`Income Inequality Ratio`
+             , data = correlationdata)
+
+summary(model2)
+get_regression_table(model2) %>%
+  kable()
+
+# resid(model2) #List of residuals
+# plot(density(resid(model2))) #A density plot
+# qqnorm(resid(model2)) # A quantile normal plot - good for checking normality
+# qqline(resid(model2))
+# get_regression_summaries(model2)
+
+```
+
